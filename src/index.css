@@ -1,0 +1,164 @@
+/* PLEASE NOTE: THESE TAILWIND IMPORTS SHOULD NEVER BE DELETED */
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+/* DO NOT DELETE THESE TAILWIND IMPORTS, OTHERWISE THE STYLING WILL NOT RENDER AT ALL */
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700&family=Rajdhani:wght@400;500;600;700&family=Orbitron:wght@400;500;600;700&display=swap');
+:root {
+  --color-accent: #00ffaa;
+  --color-accent-hover: #33ffbb;
+  --color-secondary: #0066ff;
+  --color-gold: #ffc107;
+}
+body {
+  font-family: 'Barlow Condensed', sans-serif;
+  background-color: #0a0e17;
+  color: #e0e0e0;
+}
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 700;
+}
+.logo-text {
+  font-family: 'Orbitron', sans-serif;
+}
+.gamer-card {
+  background: linear-gradient(145deg, #101624, #151c2d);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+}
+.gamer-card:hover {
+  transform: translateY(-5px) scale(1.02);
+  box-shadow: 0 10px 30px rgba(0, 255, 170, 0.15);
+  border: 1px solid var(--color-accent);
+}
+.glow-effect {
+  position: relative;
+  overflow: hidden;
+}
+.glow-effect::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(0, 255, 170, 0.1) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  pointer-events: none;
+}
+.glow-effect:hover::after {
+  opacity: 1;
+}
+.neon-border {
+  box-shadow: 0 0 10px rgba(0, 255, 170, 0.5);
+}
+.neon-text {
+  text-shadow: 0 0 10px rgba(0, 255, 170, 0.7);
+}
+.gold-text {
+  color: var(--color-gold);
+  text-shadow: 0 0 10px rgba(255, 193, 7, 0.5);
+}
+.bg-game-pattern {
+  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23112240' fill-opacity='0.2'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+.platform-selector {
+  transition: all 0.3s ease;
+}
+.platform-selector:hover {
+  transform: scale(1.05);
+}
+.platform-selector.active {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 15px rgba(0, 255, 170, 0.5);
+}
+/* Button animations */
+@keyframes pulse {
+  0% { box-shadow: 0 0 0 0 rgba(0, 255, 170, 0.7); }
+  70% { box-shadow: 0 0 0 10px rgba(0, 255, 170, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(0, 255, 170, 0); }
+}
+.btn-gamer {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+.btn-gamer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    to right,
+    transparent,
+    rgba(255, 255, 255, 0.1),
+    transparent
+  );
+  transition: all 0.6s ease;
+}
+.btn-gamer:hover::before {
+  left: 100%;
+}
+.btn-gamer:active {
+  transform: scale(0.98);
+}
+.btn-primary {
+  background: linear-gradient(45deg, #00cc88, #00ffaa);
+  color: #0a0e17;
+  font-weight: 600;
+}
+.btn-primary:hover {
+  background: linear-gradient(45deg, #00ffaa, #33ffbb);
+}
+.btn-secondary {
+  background: linear-gradient(45deg, #0055cc, #0077ff);
+  color: white;
+}
+.btn-secondary:hover {
+  background: linear-gradient(45deg, #0066ff, #3399ff);
+}
+.btn-outline {
+  border: 2px solid rgba(0, 255, 170, 0.5);
+  background: transparent;
+  color: var(--color-accent);
+}
+.btn-outline:hover {
+  border-color: var(--color-accent);
+  background: rgba(0, 255, 170, 0.1);
+}
+.btn-danger {
+  background: linear-gradient(45deg, #cc0033, #ff0044);
+  color: white;
+}
+.btn-danger:hover {
+  background: linear-gradient(45deg, #ff0044, #ff3366);
+}
+/* Price tag styling */
+.price-tag {
+  position: relative;
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  background: linear-gradient(45deg, #d4af37, #f9d423);
+  color: #0a0e17;
+  font-weight: bold;
+  clip-path: polygon(0% 0%, 100% 0%, 95% 50%, 100% 100%, 0% 100%, 5% 50%);
+}
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #0a0e17;
+}
+::-webkit-scrollbar-thumb {
+  background: #1a2234;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-accent);
+}
