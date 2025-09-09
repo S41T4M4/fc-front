@@ -1,10 +1,7 @@
 import React, { useEffect, useState, createContext, useContext } from 'react';
-type User = {
-  id: string;
-  name: string;
-  email: string;
-  platform: 'console' | 'pc' | null;
-};
+import { apiService } from '../services/api';
+import { User, LoginRequest, RegisterRequest, LoginResponse, RegisterResponse } from '../types/api';
+
 type AuthContextType = {
   user: User | null;
   isAuthenticated: boolean;
@@ -12,53 +9,103 @@ type AuthContextType = {
   register: (name: string, email: string, password: string) => Promise<void>;
   logout: () => void;
   updateUser: (data: Partial<User>) => void;
+  isLoading: boolean;
+  error: string | null;
 };
+
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
 export const AuthProvider: React.FC<{
   children: React.ReactNode;
-}> = ({
-  children
-}) => {
+}> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
   useEffect(() => {
     // Check for saved user in localStorage
     const savedUser = localStorage.getItem('user');
     if (savedUser) {
-      setUser(JSON.parse(savedUser));
+      try {
+        const parsedUser = JSON.parse(savedUser);
+        setUser(parsedUser);
+      } catch (error) {
+        console.error('Error parsing saved user:', error);
+        localStorage.removeItem('user');
+      }
     }
   }, []);
+
   const login = async (email: string, password: string, remember: boolean) => {
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 800));
-    // Mock successful login
-    const newUser = {
-      id: '1',
-      name: 'Usuário Teste',
-      email,
-      platform: null as 'console' | 'pc' | null
-    };
-    setUser(newUser);
-    if (remember) {
-      localStorage.setItem('user', JSON.stringify(newUser));
+    setIsLoading(true);
+    setError(null);
+    
+    try {
+      const loginData: LoginRequest = { email, password };
+      const response: LoginResponse = await apiService.login(loginData);
+      
+      if (response.success && response.userId && response.email && response.nome) {
+        const newUser: User = {
+          id: response.userId,
+          nome: response.nome,
+          email: response.email,
+          role: response.role || 'comprador',
+          dataRegistro: new Date().toISOString(),
+        };
+        
+        setUser(newUser);
+        
+        if (remember) {
+          localStorage.setItem('user', JSON.stringify(newUser));
+        }
+      } else {
+        throw new Error(response.message || 'Login falhou');
+      }
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Erro ao fazer login';
+      setError(errorMessage);
+      throw error;
+    } finally {
+      setIsLoading(false);
     }
   };
+
   const register = async (name: string, email: string, password: string) => {
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 800));
-    // Mock successful registration
-    const newUser = {
-      id: '1',
-      name,
-      email,
-      platform: null as 'console' | 'pc' | null
-    };
-    setUser(newUser);
-    localStorage.setItem('user', JSON.stringify(newUser));
+    setIsLoading(true);
+    setError(null);
+    
+    try {
+      const registerData: RegisterRequest = { 
+        nome: name, 
+        email, 
+        senha: password 
+      };
+      
+      const response: RegisterResponse = await apiService.register(registerData);
+      
+      if (response.success) {
+        // After successful registration, automatically log in
+        await login(email, password, true);
+      } else {
+        throw new Error(response.message || 'Registro falhou');
+      }
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Erro ao criar conta';
+      setError(errorMessage);
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
   };
+
   const logout = () => {
     setUser(null);
+    setError(null);
     localStorage.removeItem('user');
+    localStorage.removeItem('cart');
+    localStorage.removeItem('cartId');
   };
+
   const updateUser = (data: Partial<User>) => {
     if (user) {
       const updatedUser = {
@@ -69,17 +116,23 @@ export const AuthProvider: React.FC<{
       localStorage.setItem('user', JSON.stringify(updatedUser));
     }
   };
-  return <AuthContext.Provider value={{
-    user,
-    isAuthenticated: !!user,
-    login,
-    register,
-    logout,
-    updateUser
-  }}>
+
+  return (
+    <AuthContext.Provider value={{
+      user,
+      isAuthenticated: !!user,
+      login,
+      register,
+      logout,
+      updateUser,
+      isLoading,
+      error
+    }}>
       {children}
-    </AuthContext.Provider>;
+    </AuthContext.Provider>
+  );
 };
+
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (context === undefined) {

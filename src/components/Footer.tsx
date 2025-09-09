@@ -104,8 +104,8 @@ export const Footer: React.FC<FooterProps> = ({
               Contato
             </h3>
             <ul className="space-y-2">
-              <li className="text-gray-400">Email: suporte@fccoins.com</li>
-              <li className="text-gray-400">WhatsApp: +55 (11) 99999-9999</li>
+              <li className="text-gray-400">Email: ibraim99.5@gmail.com</li>
+              <li className="text-gray-400">WhatsApp: +55 (31) 99620-2741</li>
               <li className="text-gray-400">
                 Horário: 24 horas, 7 dias por semana
               </li>

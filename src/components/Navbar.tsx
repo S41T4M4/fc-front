@@ -30,6 +30,23 @@ export const Navbar: React.FC<NavbarProps> = ({
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  // Close user menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (userMenuOpen && !(event.target as Element).closest('.user-menu-container')) {
+        setUserMenuOpen(false);
+      }
+    };
+
+    if (userMenuOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [userMenuOpen]);
   const navLinks = [{
     name: 'Home',
     page: 'home'
@@ -41,7 +58,7 @@ export const Navbar: React.FC<NavbarProps> = ({
     page: 'profile',
     authRequired: true
   }];
-  return <header className={`fixed w-full z-10 transition-all duration-300 backdrop-blur-md ${scrolled ? 'bg-[#0a0e17]/90 shadow-[0_5px_15px_rgba(0,0,0,0.3)]' : 'bg-transparent'}`}>
+  return <header className={`fixed w-full z-[10000] transition-all duration-300 backdrop-blur-md ${scrolled ? 'bg-[#0a0e17]/90 shadow-[0_5px_15px_rgba(0,0,0,0.3)]' : 'bg-transparent'}`}>
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between py-4">
           {/* Logo */}
@@ -66,12 +83,14 @@ export const Navbar: React.FC<NavbarProps> = ({
             {/* Cart */}
             <button onClick={() => setCurrentPage('cart')} className="relative p-2 rounded-full hover:bg-[#1a2234] transition-colors glow-effect" aria-label="Carrinho">
               <ShoppingCartIcon className="h-5 w-5 text-gray-300" />
-              {itemCount > 0 && <span className="absolute -top-1 -right-1 bg-[var(--color-accent)] text-[#0a0e17] text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
-                  {itemCount}
-                </span>}
+              {itemCount > 0 && (
+                <span className="absolute top-0 right-0 bg-[var(--color-accent)] text-[#0a0e17] text-xs font-bold rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1 shadow-lg border border-[#0a0e17]">
+                  {itemCount > 99 ? '99+' : itemCount}
+                </span>
+              )}
             </button>
             {/* User Menu */}
-            <div className="relative">
+            <div className="relative user-menu-container z-[10001]">
               <button onClick={() => {
               if (isAuthenticated) {
                 setUserMenuOpen(!userMenuOpen);
@@ -82,27 +101,29 @@ export const Navbar: React.FC<NavbarProps> = ({
                 <UserIcon className="h-5 w-5 text-gray-300" />
               </button>
               {/* User Dropdown Menu */}
-              {userMenuOpen && isAuthenticated && <div className="absolute right-0 mt-2 w-48 bg-[#151c2d] rounded-md shadow-lg py-1 z-20 border border-[#2a3446]">
+              {userMenuOpen && isAuthenticated && (
+                <div className="fixed right-4 mt-2 w-48 bg-[#151c2d] rounded-md shadow-lg py-1 z-[99999] border border-[#2a3446]" style={{ top: '80px' }}>
                   <div className="px-4 py-2 border-b border-[#2a3446]">
                     <p className="text-sm font-medium text-gray-100">
-                      {user?.name}
+                      {user?.nome}
                     </p>
                     <p className="text-xs text-gray-400">{user?.email}</p>
                   </div>
                   <button onClick={() => {
-                setCurrentPage('profile');
-                setUserMenuOpen(false);
-              }} className="block w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-[#1a2234] hover:text-[var(--color-accent)]">
+                    setCurrentPage('profile');
+                    setUserMenuOpen(false);
+                  }} className="block w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-[#1a2234] hover:text-[var(--color-accent)]">
                     Meu Perfil
                   </button>
                   <button onClick={() => {
-                setCurrentPage('home');
-                logout();
-                setUserMenuOpen(false);
-              }} className="block w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-[#1a2234] hover:text-[var(--color-accent)]">
+                    setCurrentPage('home');
+                    logout();
+                    setUserMenuOpen(false);
+                  }} className="block w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-[#1a2234] hover:text-[var(--color-accent)]">
                     Sair
                   </button>
-                </div>}
+                </div>
+              )}
             </div>
             {/* Mobile Menu Button */}
             <button className="md:hidden p-2 rounded-full hover:bg-[#1a2234] transition-colors" onClick={() => setMobileMenuOpen(!mobileMenuOpen)} aria-label={mobileMenuOpen ? 'Fechar menu' : 'Abrir menu'}>

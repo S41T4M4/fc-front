@@ -7,6 +7,7 @@ import { Checkout } from './pages/Checkout';
 import { Profile } from './pages/Profile';
 import { Footer } from './components/Footer';
 import { AuthModal } from './components/AuthModal';
+import { CartLoader } from './components/CartLoader';
 import { CartProvider } from './context/CartContext';
 import { AuthProvider } from './context/AuthContext';
 export function App() {
@@ -35,7 +36,8 @@ export function App() {
   };
   return <AuthProvider>
       <CartProvider>
-        <div className="flex flex-col min-h-screen bg-gray-50">
+        <CartLoader />
+        <div className="flex flex-col min-h-screen bg-[#0a0e17]">
           <Navbar setCurrentPage={setCurrentPage} openAuthModal={openAuthModal} currentPage={currentPage} />
           <main className="flex-grow">{renderPage()}</main>
           <Footer setCurrentPage={setCurrentPage} />

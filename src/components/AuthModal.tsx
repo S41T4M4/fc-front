@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { XIcon, UserIcon, MailIcon, LockIcon } from 'lucide-react';
+import { XIcon, UserIcon, MailIcon, LockIcon, CheckCircleIcon } from 'lucide-react';
 import { Input } from './Input';
 import { Button } from './Button';
 import { useAuth } from '../context/AuthContext';
@@ -17,9 +17,9 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 }) => {
   const {
     login,
-    register
+    register,
+    isLoading
   } = useAuth();
-  const [isLoading, setIsLoading] = useState(false);
   // Login form state
   const [loginForm, setLoginForm] = useState({
     email: '',
@@ -28,7 +28,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   });
   // Register form state
   const [registerForm, setRegisterForm] = useState({
-    name: '',
     email: '',
     password: '',
     confirmPassword: ''
@@ -38,6 +37,10 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   // Reset Password form
   const [resetEmail, setResetEmail] = useState('');
   const [resetSent, setResetSent] = useState(false);
+  
+  // Success state
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
   if (!isOpen) return null;
   const handleLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -49,24 +52,20 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       setErrors(newErrors);
       return;
     }
-    setIsLoading(true);
     setErrors({});
     try {
       await login(loginForm.email, loginForm.password, loginForm.remember);
       onClose();
     } catch (error) {
       setErrors({
-        form: 'Credenciais inválidas. Por favor, tente novamente.'
+        form: error instanceof Error ? error.message : 'Credenciais inválidas. Por favor, tente novamente.'
       });
-    } finally {
-      setIsLoading(false);
     }
   };
   const handleRegisterSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const newErrors: Record<string, string> = {};
     // Simple validation
-    if (!registerForm.name) newErrors.name = 'Nome é obrigatório';
     if (!registerForm.email) newErrors.email = 'Email é obrigatório';
     if (!registerForm.password) newErrors.password = 'Senha é obrigatória';
     if (registerForm.password.length < 8) newErrors.password = 'A senha deve ter pelo menos 8 caracteres';
@@ -77,17 +76,22 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       setErrors(newErrors);
       return;
     }
-    setIsLoading(true);
     setErrors({});
     try {
-      await register(registerForm.name, registerForm.email, registerForm.password);
-      onClose();
+      await register('', registerForm.email, registerForm.password);
+      setSuccessMessage(`Conta criada com sucesso! Você foi automaticamente logado como ${registerForm.email.split('@')[0]}.`);
+      setShowSuccess(true);
+      
+      // Close modal after 3 seconds
+      setTimeout(() => {
+        onClose();
+        setShowSuccess(false);
+        setSuccessMessage('');
+      }, 3000);
     } catch (error) {
       setErrors({
-        form: 'Erro ao criar conta. Por favor, tente novamente.'
+        form: error instanceof Error ? error.message : 'Erro ao criar conta. Por favor, tente novamente.'
       });
-    } finally {
-      setIsLoading(false);
     }
   };
   const handleResetSubmit = async (e: React.FormEvent) => {
@@ -98,7 +102,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       setErrors(newErrors);
       return;
     }
-    setIsLoading(true);
     setErrors({});
     try {
       // Simulate API call
@@ -108,8 +111,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       setErrors({
         resetEmail: 'Erro ao enviar email. Por favor, tente novamente.'
       });
-    } finally {
-      setIsLoading(false);
     }
   };
   return <div className="fixed inset-0 z-50 overflow-y-auto">
@@ -195,13 +196,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                 </div>}
               <form onSubmit={handleRegisterSubmit}>
                 <div className="relative mb-4">
-                  <UserIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-500" />
-                  <Input type="text" value={registerForm.name} onChange={e => setRegisterForm({
-                ...registerForm,
-                name: e.target.value
-              })} placeholder="Seu nome" required error={errors.name} className="pl-10" />
-                </div>
-                <div className="relative mb-4">
                   <MailIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-500" />
                   <Input type="email" value={registerForm.email} onChange={e => setRegisterForm({
                 ...registerForm,
@@ -278,6 +272,28 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                     Voltar para Login
                   </button>
                 </p>
+              </div>
+            </div>}
+          {/* Success View */}
+          {showSuccess && <div className="relative z-10">
+              <div className="flex items-center justify-center mb-6">
+                <div className="bg-[#0d3320] p-3 rounded-full border-2 border-[var(--color-accent)]">
+                  <CheckCircleIcon className="h-8 w-8 text-[var(--color-accent)]" />
+                </div>
+              </div>
+              <h2 className="text-2xl font-bold text-center mb-6 text-white">
+                🎉 Sucesso!
+              </h2>
+              <div className="mb-6 p-4 bg-[#0d3320] border border-[var(--color-accent)] text-[var(--color-accent)] rounded-md">
+                <p className="text-center text-sm">
+                  {successMessage}
+                </p>
+              </div>
+              <div className="text-center">
+                <div className="inline-flex items-center space-x-2 text-sm text-gray-400">
+                  <div className="w-2 h-2 bg-[var(--color-accent)] rounded-full animate-pulse"></div>
+                  <span>Redirecionando automaticamente...</span>
+                </div>
               </div>
             </div>}
         </div>
