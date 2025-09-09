@@ -52,7 +52,8 @@ export const Navbar: React.FC<NavbarProps> = ({
     page: 'home'
   }, {
     name: 'Comprar Coins',
-    page: 'shop'
+    page: 'shop',
+    authRequired: true
   }, {
     name: 'Meu Perfil',
     page: 'profile',
@@ -72,18 +73,37 @@ export const Navbar: React.FC<NavbarProps> = ({
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
             {navLinks.map(link => {
-            if (link.authRequired && !isAuthenticated) return null;
-            return <button key={link.page} onClick={() => setCurrentPage(link.page)} className={`text-sm uppercase tracking-wider font-medium transition-colors hover:text-[var(--color-accent)] ${currentPage === link.page ? 'text-[var(--color-accent)] border-b-2 border-[var(--color-accent)]' : 'text-gray-300'}`}>
-                  {link.name}
-                </button>;
+            return <button 
+              key={link.page} 
+              onClick={() => {
+                if (link.authRequired && !isAuthenticated) {
+                  openAuthModal('login');
+                } else {
+                  setCurrentPage(link.page);
+                }
+              }} 
+              className={`text-sm uppercase tracking-wider font-medium transition-colors hover:text-[var(--color-accent)] ${currentPage === link.page ? 'text-[var(--color-accent)] border-b-2 border-[var(--color-accent)]' : 'text-gray-300'}`}
+            >
+              {link.name}
+            </button>;
           })}
           </nav>
           {/* User and Cart Icons */}
           <div className="flex items-center space-x-4">
             {/* Cart */}
-            <button onClick={() => setCurrentPage('cart')} className="relative p-2 rounded-full hover:bg-[#1a2234] transition-colors glow-effect" aria-label="Carrinho">
+            <button 
+              onClick={() => {
+                if (!isAuthenticated) {
+                  openAuthModal('login');
+                } else {
+                  setCurrentPage('cart');
+                }
+              }} 
+              className="relative p-2 rounded-full hover:bg-[#1a2234] transition-colors glow-effect" 
+              aria-label="Carrinho"
+            >
               <ShoppingCartIcon className="h-5 w-5 text-gray-300" />
-              {itemCount > 0 && (
+              {itemCount > 0 && isAuthenticated && (
                 <span className="absolute top-0 right-0 bg-[var(--color-accent)] text-[#0a0e17] text-xs font-bold rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1 shadow-lg border border-[#0a0e17]">
                   {itemCount > 99 ? '99+' : itemCount}
                 </span>
@@ -97,29 +117,50 @@ export const Navbar: React.FC<NavbarProps> = ({
               } else {
                 openAuthModal('login');
               }
-            }} className="p-2 rounded-full hover:bg-[#1a2234] transition-colors glow-effect" aria-label={isAuthenticated ? 'Menu do usuário' : 'Entrar'}>
-                <UserIcon className="h-5 w-5 text-gray-300" />
+            }} className="p-1 rounded-full hover:bg-[#1a2234] transition-colors glow-effect" aria-label={isAuthenticated ? 'Menu do usuário' : 'Entrar'}>
+                {isAuthenticated ? (
+                  <div className="w-8 h-8 bg-gradient-to-br from-[var(--color-accent)] to-[var(--color-gold)] rounded-full flex items-center justify-center border-2 border-[#1a2234] shadow-lg">
+                    <span className="text-[#0a0e17] font-bold text-sm">
+                      {user?.nome?.charAt(0).toUpperCase() || 'U'}
+                    </span>
+                  </div>
+                ) : (
+                  <UserIcon className="h-5 w-5 text-gray-300" />
+                )}
               </button>
               {/* User Dropdown Menu */}
               {userMenuOpen && isAuthenticated && (
-                <div className="fixed right-4 mt-2 w-48 bg-[#151c2d] rounded-md shadow-lg py-1 z-[99999] border border-[#2a3446]" style={{ top: '80px' }}>
-                  <div className="px-4 py-2 border-b border-[#2a3446]">
-                    <p className="text-sm font-medium text-gray-100">
-                      {user?.nome}
-                    </p>
-                    <p className="text-xs text-gray-400">{user?.email}</p>
+                <div className="absolute right-0 top-full mt-2 w-56 bg-[#151c2d] rounded-lg shadow-xl py-2 z-[99999] border border-[#2a3446] backdrop-blur-sm">
+                  <div className="px-4 py-3 border-b border-[#2a3446]">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-10 h-10 bg-gradient-to-br from-[var(--color-accent)] to-[var(--color-gold)] rounded-full flex items-center justify-center border-2 border-[#2a3446] shadow-lg">
+                        <span className="text-[#0a0e17] font-bold text-lg">
+                          {user?.nome?.charAt(0).toUpperCase() || 'U'}
+                        </span>
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-gray-100">
+                          {user?.nome}
+                        </p>
+                        <p className="text-xs text-gray-400">{user?.email}</p>
+                      </div>
+                    </div>
                   </div>
                   <button onClick={() => {
                     setCurrentPage('profile');
                     setUserMenuOpen(false);
-                  }} className="block w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-[#1a2234] hover:text-[var(--color-accent)]">
+                  }} className="flex items-center w-full text-left px-4 py-3 text-sm text-gray-300 hover:bg-[#1a2234] hover:text-[var(--color-accent)] transition-colors">
+                    <UserIcon className="h-4 w-4 mr-3" />
                     Meu Perfil
                   </button>
                   <button onClick={() => {
                     setCurrentPage('home');
                     logout();
                     setUserMenuOpen(false);
-                  }} className="block w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-[#1a2234] hover:text-[var(--color-accent)]">
+                  }} className="flex items-center w-full text-left px-4 py-3 text-sm text-gray-300 hover:bg-[#1a2234] hover:text-red-400 transition-colors">
+                    <svg className="h-4 w-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                    </svg>
                     Sair
                   </button>
                 </div>
@@ -134,13 +175,21 @@ export const Navbar: React.FC<NavbarProps> = ({
         {/* Mobile Menu */}
         {mobileMenuOpen && <div className="md:hidden mt-2 pb-4 bg-[#151c2d] rounded-md border border-[#2a3446]">
             {navLinks.map(link => {
-          if (link.authRequired && !isAuthenticated) return null;
-          return <button key={link.page} onClick={() => {
-            setCurrentPage(link.page);
-            setMobileMenuOpen(false);
-          }} className={`block w-full text-left py-3 px-4 text-sm font-medium uppercase tracking-wider ${currentPage === link.page ? 'text-[var(--color-accent)] bg-[#1a2234]' : 'text-gray-300'}`}>
-                  {link.name}
-                </button>;
+          return <button 
+            key={link.page} 
+            onClick={() => {
+              if (link.authRequired && !isAuthenticated) {
+                openAuthModal('login');
+                setMobileMenuOpen(false);
+              } else {
+                setCurrentPage(link.page);
+                setMobileMenuOpen(false);
+              }
+            }} 
+            className={`block w-full text-left py-3 px-4 text-sm font-medium uppercase tracking-wider ${currentPage === link.page ? 'text-[var(--color-accent)] bg-[#1a2234]' : 'text-gray-300'}`}
+          >
+            {link.name}
+          </button>;
         })}
             {!isAuthenticated && <button onClick={() => {
           openAuthModal('login');
