@@ -403,3 +403,4 @@ export const Landing: React.FC<LandingProps> = ({ openAuthModal }) => {
     </div>
   );
 };
+

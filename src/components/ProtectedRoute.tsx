@@ -69,3 +69,4 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   // If authenticated, render the protected content
   return <>{children}</>;
 };
+
