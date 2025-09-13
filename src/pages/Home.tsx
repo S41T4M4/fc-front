@@ -170,14 +170,16 @@ export const Home: React.FC<HomeProps> = ({
                 Receba suas Coins
               </h3>
               <p className="text-gray-400">
-                Após o pagamento, nossas coins serão entregues diretamente na
-                sua conta do jogo.
+                Após o pagamento, um dos nossos agentes irá entrar em contato com você para finalizar a compra.
               </p>
+              <strong className="text-green-400">
+                Transacao 100% segura e confiavel, livre de banimentos.
+              </strong>
             </div>
           </div>
         </div>
       </section>
-      {/* Testimonials */}
+     
       <section className="py-16 bg-[#0d1320]">
         <div className="container mx-auto max-w-6xl px-4">
           <h2 className="text-3xl font-bold text-center mb-3 text-white">

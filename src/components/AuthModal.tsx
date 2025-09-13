@@ -78,7 +78,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     }
     setErrors({});
     try {
-      await register('', registerForm.email, registerForm.password);
+      await register(registerForm.email.split('@')[0], registerForm.email, registerForm.password);
       setSuccessMessage(`Conta criada com sucesso! Você foi automaticamente logado como ${registerForm.email.split('@')[0]}.`);
       setShowSuccess(true);
       

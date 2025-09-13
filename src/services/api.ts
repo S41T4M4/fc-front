@@ -137,6 +137,19 @@ class ApiService {
   async removeItemFromCart(itemId: number): Promise<any> {
     return this.request(`/Carrinho/remover-item/${itemId}`, {
       method: 'DELETE',
+      body: JSON.stringify({ idItem: itemId }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+  }
+  async updateItemQuantity(itemId: number, quantity: number): Promise<any> {
+    return this.request(`/Carrinho/atualizar-quantidade/${itemId}`, {
+      method: 'PUT',
+      body: JSON.stringify({ quantidade: quantity }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
     });
   }
 
