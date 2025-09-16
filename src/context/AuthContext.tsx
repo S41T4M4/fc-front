@@ -51,6 +51,7 @@ export const AuthProvider: React.FC<{
           email: response.email,
           role: response.role || 'comprador',
           dataRegistro: new Date().toISOString(),
+          token: response.token?.token, // Armazenar o token
         };
         
         setUser(newUser);

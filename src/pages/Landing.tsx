@@ -7,14 +7,19 @@ import {
   CreditCardIcon, 
   TrophyIcon, 
   CoinsIcon, 
-  GamepadIcon,
   StarIcon,
-  CheckCircleIcon,
   ArrowRightIcon,
   PlayIcon,
   UsersIcon,
   ClockIcon,
-  LockIcon
+  LockIcon,
+  ActivityIcon,
+  BarChart3Icon,
+  TrendingUpIcon,
+  MonitorIcon,
+  Gamepad2Icon,
+  SmartphoneIcon,
+  CheckCircleIcon
 } from 'lucide-react';
 
 type LandingProps = {
@@ -89,7 +94,7 @@ export const Landing: React.FC<LandingProps> = ({ openAuthModal }) => {
 
   const stats = [
     { number: "50K+", label: "Clientes Satisfeitos" },
-    { number: "99.9%", label: "Taxa de Sucesso" },
+    { number: "100%", label: "Taxa de Sucesso" },
     { number: "< 15min", label: "Tempo de Entrega" },
     { number: "24/7", label: "Suporte Disponível" }
   ];
@@ -137,7 +142,7 @@ export const Landing: React.FC<LandingProps> = ({ openAuthModal }) => {
                 <Button 
                   size="lg" 
                   onClick={() => openAuthModal('register')} 
-                  className="group btn-gamer bg-gradient-to-r from-[var(--color-accent)] to-[var(--color-secondary)] hover:from-[var(--color-accent-hover)] hover:to-[#3399ff] shadow-lg shadow-[var(--color-accent)]/25"
+                  className="group btn-gamer bg-gradient-to-r from-[var(--color-accent)] to-[var(--color-secondary)] hover:from-[var(--color-accent-hover)] hover:to-[#33.9ff] shadow-lg shadow-[var(--color-accent)]/25"
                 >
                   <span className="flex items-center">
                     <CoinsIcon className="mr-2 h-5 w-5 transition-transform group-hover:rotate-12" />
@@ -175,77 +180,171 @@ export const Landing: React.FC<LandingProps> = ({ openAuthModal }) => {
               </div>
             </div>
 
-            {/* Right Content - Gaming Visual */}
+            {/* Right Content - Interactive Dashboard */}
             <div className={`lg:w-1/2 transition-all duration-1000 delay-300 ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-10'}`}>
               <div className="relative">
-                {/* Main Card */}
-                <div className="relative gamer-card p-8 rounded-2xl overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-br from-[var(--color-accent)]/10 to-[var(--color-secondary)]/10"></div>
+                {/* Dashboard Container */}
+                <div className="dashboard-container relative glass-morphism p-6 rounded-2xl">
+                  <div className="absolute inset-0 bg-gradient-to-br from-[var(--color-accent)]/5 to-[var(--color-secondary)]/5 rounded-2xl blur-xl"></div>
                   
-                  {/* Gaming Stats */}
-                  <div className="relative z-10 space-y-6">
-                    <div className="flex items-center justify-between">
+                  {/* Dashboard Header */}
+                  <div className="relative z-10 mb-6">
+                    <div className="flex items-center justify-between mb-4">
                       <div className="flex items-center space-x-3">
-                        <div className="w-12 h-12 bg-gradient-to-br from-[var(--color-gold)] to-[#ffd700] rounded-full flex items-center justify-center">
-                          <TrophyIcon className="h-6 w-6 text-[#0a0e17]" />
+                        <div className="w-10 h-10 bg-gradient-to-br from-[var(--color-accent)] to-[var(--color-secondary)] rounded-full flex items-center justify-center">
+                          <ActivityIcon className="h-5 w-5 text-[#0a0e17]" />
                         </div>
                         <div>
-                          <h3 className="text-white font-semibold">Ultimate Team</h3>
-                          <p className="text-gray-400 text-sm">Nível Pro</p>
+                          <h3 className="text-white font-semibold text-lg">Dashboard em Tempo Real</h3>
+                          <p className="text-gray-400 text-sm">Estatísticas ao vivo</p>
                         </div>
                       </div>
-                      <div className="text-right">
-                        <p className="text-[var(--color-accent)] font-bold text-2xl">2.5M</p>
-                        <p className="text-gray-400 text-sm">Coins</p>
+                      <div className="flex items-center space-x-2">
+                        <div className="live-indicator w-2 h-2 bg-green-400 rounded-full"></div>
+                        <span className="text-green-400 text-xs font-medium">AO VIVO</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Live Stats Grid */}
+                  <div className="relative z-10 grid grid-cols-2 gap-4 mb-6">
+                    {/* Today's Sales */}
+                    <div className="dashboard-card bg-gradient-to-br from-[#1a2234]/60 to-[#1a2234]/40 p-4 rounded-xl border border-[#2a3441] hover:border-[var(--color-accent)]/40 transition-all duration-300">
+                      <div className="flex items-center justify-between mb-2">
+                        <TrendingUpIcon className="h-5 w-5 text-green-400" />
+                        <span className="text-xs text-gray-400">Hoje</span>
+                      </div>
+                      <div className="space-y-1">
+                        <p className="stat-counter text-2xl font-bold text-white" style={{ '--delay': '0s' } as React.CSSProperties}>R$ 45.2K</p>
+                        <p className="text-xs text-green-400 flex items-center">
+                          <TrendingUpIcon className="h-3 w-3 mr-1" />
+                          +12.5%
+                        </p>
                       </div>
                     </div>
 
-                    {/* Progress Bar */}
-                    <div className="space-y-2">
-                      <div className="flex justify-between text-sm">
-                        <span className="text-gray-400">Progresso da Temporada</span>
-                        <span className="text-[var(--color-accent)]">85%</span>
+                    {/* Coins Delivered */}
+                    <div className="dashboard-card bg-gradient-to-br from-[#1a2234]/60 to-[#1a2234]/40 p-4 rounded-xl border border-[#2a3441] hover:border-[var(--color-accent)]/40 transition-all duration-300">
+                      <div className="flex items-center justify-between mb-2">
+                        <CoinsIcon className="h-5 w-5 text-[var(--color-gold)]" />
+                        <span className="text-xs text-gray-400">Entregues</span>
                       </div>
-                      <div className="w-full bg-[#1a2234] rounded-full h-2">
-                        <div className="bg-gradient-to-r from-[var(--color-accent)] to-[var(--color-secondary)] h-2 rounded-full w-[85%] transition-all duration-1000"></div>
+                      <div className="space-y-1">
+                        <p className="stat-counter text-2xl font-bold text-white" style={{ '--delay': '0.5s' } as React.CSSProperties}>2.8M</p>
+                        <p className="text-xs text-[var(--color-gold)] flex items-center">
+                          <CoinsIcon className="h-3 w-3 mr-1" />
+                          coins hoje
+                        </p>
                       </div>
                     </div>
+                  </div>
 
-                    {/* Recent Activity */}
+                  {/* Platform Chart */}
+                  <div className="relative z-10 mb-6">
+                    <div className="flex items-center justify-between mb-4">
+                      <h4 className="text-white font-semibold">Plataformas Populares</h4>
+                      <BarChart3Icon className="h-5 w-5 text-[var(--color-accent)]" />
+                    </div>
                     <div className="space-y-3">
-                      <h4 className="text-white font-semibold">Atividade Recente</h4>
-                      <div className="space-y-2">
-                        <div className="flex items-center space-x-3 p-3 bg-[#1a2234]/50 rounded-lg">
-                          <div className="w-8 h-8 bg-green-500/20 rounded-full flex items-center justify-center">
-                            <CheckCircleIcon className="h-4 w-4 text-green-400" />
+                      {/* PC */}
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-3">
+                          <div className="w-8 h-8 bg-blue-500/20 rounded-lg flex items-center justify-center">
+                            <MonitorIcon className="h-4 w-4 text-blue-400" />
                           </div>
-                          <div className="flex-1">
-                            <p className="text-white text-sm">Coins recebidas</p>
-                            <p className="text-gray-400 text-xs">+500.000 coins</p>
-                          </div>
-                          <span className="text-[var(--color-accent)] text-sm">Agora</span>
+                          <span className="text-white text-sm">PC</span>
                         </div>
-                        <div className="flex items-center space-x-3 p-3 bg-[#1a2234]/50 rounded-lg">
-                          <div className="w-8 h-8 bg-blue-500/20 rounded-full flex items-center justify-center">
-                            <GamepadIcon className="h-4 w-4 text-blue-400" />
+                        <div className="flex items-center space-x-3">
+                          <div className="w-24 h-2 bg-[#1a2234] rounded-full overflow-hidden">
+                            <div className="chart-bar h-full bg-gradient-to-r from-blue-500 to-blue-400 rounded-full" style={{ width: '65%' }}></div>
                           </div>
-                          <div className="flex-1">
-                            <p className="text-white text-sm">Compra realizada</p>
-                            <p className="text-gray-400 text-xs">Pacote Premium</p>
-                          </div>
-                          <span className="text-gray-400 text-sm">2min</span>
+                          <span className="text-white text-sm font-medium">65%</span>
                         </div>
                       </div>
+
+                      {/* PlayStation */}
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-3">
+                          <div className="w-8 h-8 bg-blue-600/20 rounded-lg flex items-center justify-center">
+                            <Gamepad2Icon className="h-4 w-4 text-blue-500" />
+                          </div>
+                          <span className="text-white text-sm">PlayStation</span>
+                        </div>
+                        <div className="flex items-center space-x-3">
+                          <div className="w-24 h-2 bg-[#1a2234] rounded-full overflow-hidden">
+                            <div className="chart-bar h-full bg-gradient-to-r from-blue-600 to-blue-500 rounded-full" style={{ width: '25%', animationDelay: '1s' }}></div>
+                          </div>
+                          <span className="text-white text-sm font-medium">25%</span>
+                        </div>
+                      </div>
+
+                      {/* Xbox */}
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-3">
+                          <div className="w-8 h-8 bg-green-600/20 rounded-lg flex items-center justify-center">
+                            <SmartphoneIcon className="h-4 w-4 text-green-500" />
+                          </div>
+                          <span className="text-white text-sm">Xbox</span>
+                        </div>
+                        <div className="flex items-center space-x-3">
+                          <div className="w-24 h-2 bg-[#1a2234] rounded-full overflow-hidden">
+                            <div className="chart-bar h-full bg-gradient-to-r from-green-600 to-green-500 rounded-full" style={{ width: '10%', animationDelay: '1.5s' }}></div>
+                          </div>
+                          <span className="text-white text-sm font-medium">10%</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Live Transaction Feed */}
+                  <div className="relative z-10">
+                    <div className="flex items-center justify-between mb-4">
+                      <h4 className="text-white font-semibold">Transações Recentes</h4>
+                      <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                    </div>
+                    <div className="space-y-3 max-h-48 overflow-hidden">
+                      {[
+                        { platform: 'PC', amount: '500K', time: '2min', status: 'completed' },
+                        { platform: 'PS5', amount: '1M', time: '5min', status: 'completed' },
+                        { platform: 'Xbox', amount: '250K', time: '8min', status: 'processing' },
+                        { platform: 'PC', amount: '750K', time: '12min', status: 'completed' },
+                        { platform: 'PS5', amount: '2M', time: '15min', status: 'completed' },
+                      ].map((transaction, index) => (
+                        <div key={index} className="transaction-item flex items-center justify-between p-3 bg-[#1a2234]/30 rounded-lg border border-[#2a3441]/50 hover:border-[var(--color-accent)]/30 transition-all duration-300">
+                          <div className="flex items-center space-x-3">
+                            <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                              transaction.platform === 'PC' ? 'bg-blue-500/20' :
+                              transaction.platform === 'PS5' ? 'bg-blue-600/20' :
+                              'bg-green-600/20'
+                            }`}>
+                              {transaction.platform === 'PC' ? <MonitorIcon className="h-4 w-4 text-blue-400" /> :
+                               transaction.platform === 'PS5' ? <Gamepad2Icon className="h-4 w-4 text-blue-500" /> :
+                               <SmartphoneIcon className="h-4 w-4 text-green-500" />}
+                            </div>
+                            <div>
+                              <p className="text-white text-sm font-medium">{transaction.platform}</p>
+                              <p className="text-gray-400 text-xs">{transaction.amount} coins</p>
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            <div className="flex items-center space-x-2">
+                              <CheckCircleIcon className="h-4 w-4 text-green-400" />
+                              <span className="text-green-400 text-xs font-medium">Concluído</span>
+                            </div>
+                            <p className="text-gray-400 text-xs">{transaction.time} atrás</p>
+                          </div>
+                        </div>
+                      ))}
                     </div>
                   </div>
                 </div>
 
                 {/* Floating Elements */}
-                <div className="absolute -top-4 -right-4 w-20 h-20 bg-gradient-to-br from-[var(--color-gold)] to-[#ffd700] rounded-full flex items-center justify-center animate-bounce">
-                  <CoinsIcon className="h-8 w-8 text-[#0a0e17]" />
+                <div className="absolute -top-4 -right-4 w-16 h-16 bg-gradient-to-br from-[var(--color-accent)] to-[var(--color-secondary)] rounded-full flex items-center justify-center animate-bounce">
+                  <TrendingUpIcon className="h-6 w-6 text-white" />
                 </div>
-                <div className="absolute -bottom-4 -left-4 w-16 h-16 bg-gradient-to-br from-[var(--color-accent)] to-[var(--color-secondary)] rounded-full flex items-center justify-center animate-pulse">
-                  <StarIcon className="h-6 w-6 text-white" />
+                <div className="absolute -bottom-4 -left-4 w-12 h-12 bg-gradient-to-br from-[var(--color-gold)] to-yellow-500 rounded-full flex items-center justify-center animate-pulse">
+                  <CoinsIcon className="h-5 w-5 text-[#0a0e17]" />
                 </div>
               </div>
             </div>
@@ -403,4 +502,3 @@ export const Landing: React.FC<LandingProps> = ({ openAuthModal }) => {
     </div>
   );
 };
-

@@ -47,13 +47,29 @@ export const Navbar: React.FC<NavbarProps> = ({
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [userMenuOpen]);
+  // Helper function to check if user is a seller
+  const isSeller = () => {
+    return user?.role === 'seller' || user?.role === 'admin';
+  };
+
+  // Helper function to check if user is a buyer
+  const isBuyer = () => {
+    return user?.role === 'buyer' || user?.role === 'user';
+  };
+
   const navLinks = [{
     name: 'Home',
     page: 'home'
   }, {
     name: 'Comprar Coins',
     page: 'shop',
-    authRequired: true
+    authRequired: true,
+    showFor: ['buyer', 'user'] // Only show for buyers
+  }, {
+    name: 'Painel Vendedor',
+    page: 'seller-dashboard',
+    authRequired: true,
+    showFor: ['seller', 'admin'] // Only show for sellers
   }, {
     name: 'Meu Perfil',
     page: 'profile',
@@ -73,42 +89,51 @@ export const Navbar: React.FC<NavbarProps> = ({
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
             {navLinks.map(link => {
-            return <button 
-              key={link.page} 
-              onClick={() => {
-                if (link.authRequired && !isAuthenticated) {
-                  openAuthModal('login');
-                } else {
-                  setCurrentPage(link.page);
-                }
-              }} 
-              className={`text-sm uppercase tracking-wider font-medium transition-colors hover:text-[var(--color-accent)] ${currentPage === link.page ? 'text-[var(--color-accent)] border-b-2 border-[var(--color-accent)]' : 'text-gray-300'}`}
-            >
-              {link.name}
-            </button>;
-          })}
+              // Check if link should be shown based on user role
+              const shouldShow = !link.showFor || 
+                (isAuthenticated && link.showFor.includes(user?.role || '')) ||
+                (!isAuthenticated && !link.authRequired);
+              
+              if (!shouldShow) return null;
+              
+              return <button 
+                key={link.page} 
+                onClick={() => {
+                  if (link.authRequired && !isAuthenticated) {
+                    openAuthModal('login');
+                  } else {
+                    setCurrentPage(link.page);
+                  }
+                }} 
+                className={`text-sm uppercase tracking-wider font-medium transition-colors hover:text-[var(--color-accent)] ${currentPage === link.page ? 'text-[var(--color-accent)] border-b-2 border-[var(--color-accent)]' : 'text-gray-300'}`}
+              >
+                {link.name}
+              </button>;
+            })}
           </nav>
           {/* User and Cart Icons */}
           <div className="flex items-center space-x-4">
-            {/* Cart */}
-            <button 
-              onClick={() => {
-                if (!isAuthenticated) {
-                  openAuthModal('login');
-                } else {
-                  setCurrentPage('cart');
-                }
-              }} 
-              className="relative p-2 rounded-full hover:bg-[#1a2234] transition-colors glow-effect" 
-              aria-label="Carrinho"
-            >
-              <ShoppingCartIcon className="h-5 w-5 text-gray-300" />
-              {itemCount > 0 && isAuthenticated && (
-                <span className="absolute top-0 right-0 bg-[var(--color-accent)] text-[#0a0e17] text-xs font-bold rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1 shadow-lg border border-[#0a0e17]">
-                  {itemCount > 99 ? '99+' : itemCount}
-                </span>
-              )}
-            </button>
+            {/* Cart - Only show for buyers */}
+            {(!isAuthenticated || isBuyer()) && (
+              <button 
+                onClick={() => {
+                  if (!isAuthenticated) {
+                    openAuthModal('login');
+                  } else {
+                    setCurrentPage('cart');
+                  }
+                }} 
+                className="relative p-2 rounded-full hover:bg-[#1a2234] transition-colors glow-effect" 
+                aria-label="Carrinho"
+              >
+                <ShoppingCartIcon className="h-5 w-5 text-gray-300" />
+                {itemCount > 0 && isAuthenticated && (
+                  <span className="absolute top-0 right-0 bg-[var(--color-accent)] text-[#0a0e17] text-xs font-bold rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1 shadow-lg border border-[#0a0e17]">
+                    {itemCount > 99 ? '99+' : itemCount}
+                  </span>
+                )}
+              </button>
+            )}
             {/* User Menu */}
             <div className="relative user-menu-container z-[10001]">
               <button onClick={() => {
@@ -143,6 +168,15 @@ export const Navbar: React.FC<NavbarProps> = ({
                           {user?.nome}
                         </p>
                         <p className="text-xs text-gray-400">{user?.email}</p>
+                        <div className="flex items-center space-x-2 mt-1">
+                          <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
+                            isSeller() 
+                              ? 'bg-[var(--color-accent)]/20 text-[var(--color-accent)]' 
+                              : 'bg-green-500/20 text-green-400'
+                          }`}>
+                            {isSeller() ? 'Vendedor' : 'Comprador'}
+                          </span>
+                        </div>
                       </div>
                     </div>
                   </div>

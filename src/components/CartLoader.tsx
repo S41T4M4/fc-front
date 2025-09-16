@@ -11,7 +11,7 @@ export const CartLoader: React.FC = () => {
       console.log('Loading cart for user:', user.id);
       loadCart(user.id);
     }
-  }, [isAuthenticated, user, cartId, loadCart]);
+  }, [isAuthenticated, user?.id, cartId]);
 
   return null; // Este componente não renderiza nada
 };

@@ -36,15 +36,35 @@ export interface ApiError {
 }
 
 class ApiService {
+  private getAuthToken(): string | null {
+    // Buscar o token do localStorage ou de onde estiver armazenado
+    const user = localStorage.getItem('user');
+    if (user) {
+      try {
+        const parsedUser = JSON.parse(user);
+        return parsedUser.token || null;
+      } catch {
+        return null;
+      }
+    }
+    return null;
+  }
+
   private async request<T>(
     endpoint: string,
     options: RequestInit = {}
   ): Promise<T> {
     const url = `${API_BASE_URL}${endpoint}`;
     
-    const defaultHeaders = {
+    const defaultHeaders: Record<string, string> = {
       'Content-Type': 'application/json',
     };
+
+    // Adicionar token de autenticação se disponível
+    const token = this.getAuthToken();
+    if (token) {
+      defaultHeaders['Authorization'] = `Bearer ${token}`;
+    }
 
     const config: RequestInit = {
       ...options,

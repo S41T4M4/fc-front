@@ -5,6 +5,7 @@ export interface User {
   email: string;
   role: string;
   dataRegistro: string;
+  token?: string;
 }
 
 export interface Platform {

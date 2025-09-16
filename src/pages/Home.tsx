@@ -1,6 +1,21 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '../components/Button';
-import { ShieldIcon, ZapIcon, HeadphonesIcon, CreditCardIcon, TrophyIcon, CoinsIcon, GamepadIcon } from 'lucide-react';
+import { useIntersectionObserver } from '../components/Transition';
+import { 
+  ShieldIcon, 
+  ZapIcon, 
+  HeadphonesIcon, 
+  CreditCardIcon, 
+  TrophyIcon, 
+  CoinsIcon, 
+  GamepadIcon,
+  ActivityIcon,
+  TrendingUpIcon,
+  StarIcon,
+  CheckCircleIcon,
+  UsersIcon,
+  ClockIcon
+} from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 type HomeProps = {
   setCurrentPage: (page: string) => void;
@@ -11,116 +26,276 @@ export const Home: React.FC<HomeProps> = ({
   openAuthModal
 }) => {
   const {
-    isAuthenticated
+    isAuthenticated,
+    user
   } = useAuth();
+
+  // State for dynamic data and animations
+  const [stats, setStats] = useState({
+    totalCoins: 0,
+    totalSpent: 0,
+    ordersCount: 0,
+    lastOrder: null as Date | null
+  });
+
+  // Intersection observers for scroll animations
+  const [heroRef, heroVisible] = useIntersectionObserver(0.1, true);
+  const [featuresRef] = useIntersectionObserver(0.2, true);
+  const [howItWorksRef] = useIntersectionObserver(0.2, true);
+  const [testimonialsRef] = useIntersectionObserver(0.2, true);
+
+  // Simulate loading user stats
+  useEffect(() => {
+    if (isAuthenticated) {
+      const timer = setTimeout(() => {
+        setStats({
+          totalCoins: 2500000,
+          totalSpent: 450.50,
+          ordersCount: 12,
+          lastOrder: new Date()
+        });
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [isAuthenticated]);
+
   return <div className="w-full bg-[#0a0e17] bg-game-pattern">
       {/* Hero Section */}
-      <section className="pt-28 pb-16 px-4 relative">
+      <section ref={heroRef} className="pt-28 pb-16 px-4 relative overflow-hidden">
         <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-r from-[#00ccff]/10 to-[#00ffaa]/10 pointer-events-none"></div>
-        <div className="container mx-auto max-w-6xl relative z-10">
-          <div className="flex flex-col md:flex-row items-center">
-            <div className="md:w-1/2 md:pr-12">
-              <span className="inline-block px-4 py-1 bg-[#1a2234] text-[var(--color-accent)] rounded-full text-sm font-semibold mb-6 uppercase tracking-wider">
-                Potencialize seu Ultimate Team
-              </span>
-              <h1 className="text-4xl md:text-5xl font-bold text-white mb-4 leading-tight">
-                Coins para{' '}
-                <span className="text-[var(--color-gold)] neon-text">
-                  EA FC
-                </span>{' '}
-                do jeito{' '}
-                <span className="text-[var(--color-accent)] neon-text">
-                  PRO
-                </span>
-              </h1>
-              <p className="text-lg text-gray-300 mb-8">
-                Monte seu time dos sonhos com as melhores cartas. Entrega
-                rápida, preços imbatíveis e segurança total para sua conta.
-              </p>
+        {/* Animated Background Elements */}
+        <div className="absolute top-20 right-20 w-32 h-32 bg-gradient-to-br from-[var(--color-accent)]/20 to-transparent rounded-full blur-xl animate-pulse"></div>
+        <div className="absolute bottom-20 left-20 w-24 h-24 bg-gradient-to-br from-[var(--color-gold)]/20 to-transparent rounded-full blur-lg animate-bounce"></div>
+        
+        <div className="container mx-auto max-w-7xl relative z-10">
+          <div className="flex flex-col lg:flex-row items-center gap-12">
+            {/* Left Content */}
+            <div className={`lg:w-1/2 space-y-8 transition-all duration-1000 ${heroVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+              {/* Welcome Message */}
+              {isAuthenticated && (
+                <div className="inline-flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-green-600/20 to-emerald-600/20 border border-green-500/30 rounded-full">
+                  <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                  <span className="text-green-400 text-sm font-semibold uppercase tracking-wider">
+                    Bem-vindo de volta, {user?.nome || 'Jogador'}!
+                  </span>
+                </div>
+              )}
+              
+          
+              {/* Main Heading */}
+              <div className="space-y-4">
+                <h1 className="text-5xl lg:text-7xl font-bold leading-tight">
+                  <span className="text-white">Coins para</span>
+                  <br />
+                  <span className="text-[var(--color-gold)] neon-text">EA FC</span>
+                  <br />
+                  <span className="text-[var(--color-accent)] neon-text">Ultimate</span>
+                </h1>
+                <p className="text-xl text-gray-300 leading-relaxed max-w-lg">
+                  Monte seu time dos sonhos com as melhores cartas. Entrega rápida, 
+                  preços imbatíveis e segurança total para sua conta.
+                </p>
+              </div>
+
+              {/* Action Buttons */}
               <div className="flex flex-col sm:flex-row gap-4">
                 <Button size="lg" onClick={() => setCurrentPage('shop')} className="group">
                   <span className="flex items-center">
+                    <CoinsIcon className="mr-2 h-5 w-5 transition-transform group-hover:rotate-12" />
                     Comprar Coins
-                    <CoinsIcon className="ml-2 h-5 w-5 transition-transform group-hover:rotate-12" />
                   </span>
                 </Button>
-                {!isAuthenticated && <Button variant="outline" size="lg" onClick={() => openAuthModal('register')}>
-                    Criar Conta
-                  </Button>}
+                {!isAuthenticated && (
+                  <Button variant="outline" size="lg" onClick={() => openAuthModal('register')}>
+                    <span className="flex items-center">
+                      <UsersIcon className="mr-2 h-5 w-5" />
+                      Criar Conta
+                    </span>
+                  </Button>
+                )}
+              </div>
+
+              {/* Quick Stats */}
+              <div className="flex items-center space-x-6 text-sm">
+                <div className="flex items-center space-x-2">
+                  <UsersIcon className="h-5 w-5 text-[var(--color-accent)]" />
+                  <span className="text-gray-400">50K+ jogadores</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <ShieldIcon className="h-5 w-5 text-[var(--color-accent)]" />
+                  <span className="text-gray-400">100% seguro</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <ClockIcon className="h-5 w-5 text-[var(--color-accent)]" />
+                  <span className="text-gray-400">Entrega rápida</span>
+                </div>
               </div>
             </div>
-            <div className="md:w-1/2 mt-12 md:mt-0">
-              <div className="relative">
-                <div className="absolute -inset-0.5 bg-gradient-to-r from-[var(--color-accent)] to-[var(--color-secondary)] rounded-lg blur-lg opacity-75"></div>
-                <img src="https://images.unsplash.com/photo-1493711662062-fa541adb3fc8?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1650&q=80" alt="EA FC Gaming" className="relative rounded-lg shadow-xl w-full h-auto object-cover z-10" />
-              </div>
+
+            {/* Right Content - User Dashboard or Visual */}
+            <div className={`lg:w-1/2 transition-all duration-1000 delay-300 ${heroVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-10'}`}>
+              {isAuthenticated ? (
+                // Personal Dashboard for logged users
+                <div className="relative">
+                  <div className="dashboard-container relative glass-morphism p-6 rounded-2xl">
+                    <div className="absolute inset-0 bg-gradient-to-br from-[var(--color-accent)]/5 to-[var(--color-secondary)]/5 rounded-2xl blur-xl"></div>
+                    
+                    {/* Dashboard Header */}
+                    <div className="relative z-10 mb-6">
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="flex items-center space-x-3">
+                          <div className="w-10 h-10 bg-gradient-to-br from-[var(--color-accent)] to-[var(--color-secondary)] rounded-full flex items-center justify-center">
+                            <ActivityIcon className="h-5 w-5 text-[#0a0e17]" />
+                          </div>
+                          <div>
+                            <h3 className="text-white font-semibold text-lg">Seu Dashboard</h3>
+                            <p className="text-gray-400 text-sm">Estatísticas pessoais</p>
+                          </div>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <div className="live-indicator w-2 h-2 bg-green-400 rounded-full"></div>
+                          <span className="text-green-400 text-xs font-medium">ATIVO</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Personal Stats Grid */}
+                    <div className="relative z-10 grid grid-cols-2 gap-4 mb-6">
+                      {/* Total Coins */}
+                      <div className="dashboard-card bg-gradient-to-br from-[#1a2234]/60 to-[#1a2234]/40 p-4 rounded-xl border border-[#2a3441] hover:border-[var(--color-accent)]/40 transition-all duration-300">
+                        <div className="flex items-center justify-between mb-2">
+                          <CoinsIcon className="h-5 w-5 text-[var(--color-gold)]" />
+                          <span className="text-xs text-gray-400">Total</span>
+                        </div>
+                        <div className="space-y-1">
+                          <p className="stat-counter text-2xl font-bold text-white" style={{ '--delay': '0s' } as React.CSSProperties}>
+                            {stats.totalCoins.toLocaleString()}
+                          </p>
+                          <p className="text-xs text-[var(--color-gold)] flex items-center">
+                            <CoinsIcon className="h-3 w-3 mr-1" />
+                            coins compradas
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Total Spent */}
+                      <div className="dashboard-card bg-gradient-to-br from-[#1a2234]/60 to-[#1a2234]/40 p-4 rounded-xl border border-[#2a3441] hover:border-[var(--color-accent)]/40 transition-all duration-300">
+                        <div className="flex items-center justify-between mb-2">
+                          <TrendingUpIcon className="h-5 w-5 text-green-400" />
+                          <span className="text-xs text-gray-400">Gasto</span>
+                        </div>
+                        <div className="space-y-1">
+                          <p className="stat-counter text-2xl font-bold text-white" style={{ '--delay': '0.5s' } as React.CSSProperties}>
+                            R$ {stats.totalSpent.toFixed(2)}
+                          </p>
+                          <p className="text-xs text-green-400 flex items-center">
+                            <TrendingUpIcon className="h-3 w-3 mr-1" />
+                            total investido
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Recent Activity */}
+                    <div className="relative z-10">
+                      <div className="flex items-center justify-between mb-4">
+                        <h4 className="text-white font-semibold">Atividade Recente</h4>
+                        <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                      </div>
+                      <div className="space-y-3">
+                        <div className="flex items-center justify-between p-3 bg-[#1a2234]/30 rounded-lg border border-[#2a3441]/50">
+                          <div className="flex items-center space-x-3">
+                            <div className="w-8 h-8 bg-green-500/20 rounded-full flex items-center justify-center">
+                              <CheckCircleIcon className="h-4 w-4 text-green-400" />
+                            </div>
+                            <div>
+                              <p className="text-white text-sm font-medium">Última Compra</p>
+                              <p className="text-gray-400 text-xs">{stats.ordersCount} pedidos realizados</p>
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            <p className="text-green-400 text-xs font-medium">Concluído</p>
+                            <p className="text-gray-400 text-xs">Hoje</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Floating Elements */}
+                  <div className="absolute -top-4 -right-4 w-16 h-16 bg-gradient-to-br from-[var(--color-accent)] to-[var(--color-secondary)] rounded-full flex items-center justify-center animate-bounce">
+                    <TrophyIcon className="h-6 w-6 text-white" />
+                  </div>
+                  <div className="absolute -bottom-4 -left-4 w-12 h-12 bg-gradient-to-br from-[var(--color-gold)] to-yellow-500 rounded-full flex items-center justify-center animate-pulse">
+                    <StarIcon className="h-5 w-5 text-[#0a0e17]" />
+                  </div>
+                </div>
+              ) : (
+                // Gaming Visual for non-logged users
+                <div className="relative">
+                  <div className="relative glass-morphism p-8 rounded-2xl">
+                    <div className="absolute inset-0 bg-gradient-to-br from-[var(--color-accent)]/10 to-[var(--color-secondary)]/10"></div>
+                    
+                    {/* Gaming Stats */}
+                    <div className="relative z-10 space-y-6">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-3">
+                          <div className="w-12 h-12 bg-gradient-to-br from-[var(--color-gold)] to-[#ffd700] rounded-full flex items-center justify-center">
+                            <TrophyIcon className="h-6 w-6 text-[#0a0e17]" />
+                          </div>
+                          <div>
+                            <h3 className="text-white font-semibold">Ultimate Team</h3>
+                            <p className="text-gray-400 text-sm">Nível Pro</p>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-[var(--color-accent)] font-bold text-2xl">2.5M</p>
+                          <p className="text-gray-400 text-sm">Coins</p>
+                        </div>
+                      </div>
+
+                      {/* Progress Bar */}
+                      <div className="space-y-2">
+                        <div className="flex justify-between text-sm">
+                          <span className="text-gray-400">Progresso da Temporada</span>
+                          <span className="text-[var(--color-accent)]">85%</span>
+                        </div>
+                        <div className="w-full bg-[#1a2234] rounded-full h-2">
+                          <div className="bg-gradient-to-r from-[var(--color-accent)] to-[var(--color-secondary)] h-2 rounded-full w-[85%] transition-all duration-1000"></div>
+                        </div>
+                      </div>
+
+                      {/* Quick Stats */}
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="text-center p-3 bg-[#1a2234]/50 rounded-lg">
+                          <p className="text-2xl font-bold text-white">1.2M</p>
+                          <p className="text-gray-400 text-sm">Coins Hoje</p>
+                        </div>
+                        <div className="text-center p-3 bg-[#1a2234]/50 rounded-lg">
+                          <p className="text-2xl font-bold text-white">98%</p>
+                          <p className="text-gray-400 text-sm">Satisfação</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Floating Elements */}
+                  <div className="absolute -top-4 -right-4 w-20 h-20 bg-gradient-to-br from-[var(--color-gold)] to-[#ffd700] rounded-full flex items-center justify-center animate-bounce">
+                    <CoinsIcon className="h-8 w-8 text-[#0a0e17]" />
+                  </div>
+                  <div className="absolute -bottom-4 -left-4 w-16 h-16 bg-gradient-to-br from-[var(--color-accent)] to-[var(--color-secondary)] rounded-full flex items-center justify-center animate-pulse">
+                    <StarIcon className="h-6 w-6 text-white" />
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
       </section>
       {/* Features Section */}
-      <section className="py-16 bg-[#0d1320]">
-        <div className="container mx-auto max-w-6xl px-4">
-          <h2 className="text-3xl font-bold text-center mb-3 text-white">
-            Por que escolher nossa loja?
-          </h2>
-          <p className="text-gray-400 text-center mb-12 max-w-2xl mx-auto">
-            Oferecemos a melhor experiência para compra de coins do EA FC, com
-            segurança e rapidez para você focar apenas em montar seu time.
-          </p>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <div className="gamer-card p-6 rounded-lg">
-              <div className="bg-gradient-to-br from-[#1a2234] to-[#101624] p-3 rounded-full w-12 h-12 flex items-center justify-center mb-4">
-                <ShieldIcon className="h-6 w-6 text-[var(--color-accent)]" />
-              </div>
-              <h3 className="text-xl font-semibold mb-2 text-white">
-                100% Seguro
-              </h3>
-              <p className="text-gray-400">
-                Transações criptografadas e sistema anti-detecção para proteger
-                sua conta de banimentos.
-              </p>
-            </div>
-            <div className="gamer-card p-6 rounded-lg">
-              <div className="bg-gradient-to-br from-[#1a2234] to-[#101624] p-3 rounded-full w-12 h-12 flex items-center justify-center mb-4">
-                <ZapIcon className="h-6 w-6 text-[var(--color-accent)]" />
-              </div>
-              <h3 className="text-xl font-semibold mb-2 text-white">
-                Entrega Rápida
-              </h3>
-              <p className="text-gray-400">
-                Receba suas coins em até 15 minutos após a confirmação do
-                pagamento.
-              </p>
-            </div>
-            <div className="gamer-card p-6 rounded-lg">
-              <div className="bg-gradient-to-br from-[#1a2234] to-[#101624] p-3 rounded-full w-12 h-12 flex items-center justify-center mb-4">
-                <HeadphonesIcon className="h-6 w-6 text-[var(--color-accent)]" />
-              </div>
-              <h3 className="text-xl font-semibold mb-2 text-white">
-                Suporte 24/7
-              </h3>
-              <p className="text-gray-400">
-                Equipe de suporte disponível a qualquer hora para ajudar com
-                suas dúvidas.
-              </p>
-            </div>
-            <div className="gamer-card p-6 rounded-lg">
-              <div className="bg-gradient-to-br from-[#1a2234] to-[#101624] p-3 rounded-full w-12 h-12 flex items-center justify-center mb-4">
-                <CreditCardIcon className="h-6 w-6 text-[var(--color-accent)]" />
-              </div>
-              <h3 className="text-xl font-semibold mb-2 text-white">
-                Pagamento Flexível
-              </h3>
-              <p className="text-gray-400">
-                Diversas opções de pagamento: PIX, cartão de crédito e boleto.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
+      
       {/* How It Works */}
-      <section className="py-16 bg-[#0a0e17] bg-game-pattern">
+      <section ref={howItWorksRef} className="py-16 bg-[#0a0e17] bg-game-pattern">
         <div className="container mx-auto max-w-6xl px-4">
           <h2 className="text-3xl font-bold text-center mb-3 text-white">
             Como Funciona
@@ -180,81 +355,7 @@ export const Home: React.FC<HomeProps> = ({
         </div>
       </section>
      
-      <section className="py-16 bg-[#0d1320]">
-        <div className="container mx-auto max-w-6xl px-4">
-          <h2 className="text-3xl font-bold text-center mb-3 text-white">
-            O que dizem nossos clientes
-          </h2>
-          <p className="text-gray-400 text-center mb-12 max-w-2xl mx-auto">
-            Veja o que os jogadores estão falando sobre nossas coins:
-          </p>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="gamer-card p-6 rounded-lg">
-              <div className="flex items-center mb-4">
-                <div className="flex text-[var(--color-gold)]">
-                  {[...Array(5)].map((_, i) => <svg key={i} className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118l-2.8-2.034c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
-                    </svg>)}
-                </div>
-              </div>
-              <p className="text-gray-300 mb-4">
-                "Comprei 500k coins e recebi em menos de 10 minutos! Serviço
-                excelente e confiável, recomendo demais."
-              </p>
-              <div className="flex items-center">
-                <div className="font-medium text-[var(--color-accent)]">
-                  Rafael Silva
-                </div>
-                <div className="ml-2 px-2 py-0.5 bg-[#1a2234] text-gray-400 text-xs rounded">
-                  PS5
-                </div>
-              </div>
-            </div>
-            <div className="gamer-card p-6 rounded-lg">
-              <div className="flex items-center mb-4">
-                <div className="flex text-[var(--color-gold)]">
-                  {[...Array(5)].map((_, i) => <svg key={i} className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118l-2.8-2.034c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
-                    </svg>)}
-                </div>
-              </div>
-              <p className="text-gray-300 mb-4">
-                "Já comprei em vários sites, mas aqui é o mais rápido e seguro.
-                Nunca tive problemas com minha conta."
-              </p>
-              <div className="flex items-center">
-                <div className="font-medium text-[var(--color-accent)]">
-                  Mariana Costa
-                </div>
-                <div className="ml-2 px-2 py-0.5 bg-[#1a2234] text-gray-400 text-xs rounded">
-                  XBOX
-                </div>
-              </div>
-            </div>
-            <div className="gamer-card p-6 rounded-lg">
-              <div className="flex items-center mb-4">
-                <div className="flex text-[var(--color-gold)]">
-                  {[...Array(5)].map((_, i) => <svg key={i} className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118l-2.8-2.034c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
-                    </svg>)}
-                </div>
-              </div>
-              <p className="text-gray-300 mb-4">
-                "Preços justos e atendimento nota 10. O suporte me ajudou com
-                uma dúvida às 3 da manhã! Incrível."
-              </p>
-              <div className="flex items-center">
-                <div className="font-medium text-[var(--color-accent)]">
-                  Lucas Oliveira
-                </div>
-                <div className="ml-2 px-2 py-0.5 bg-[#1a2234] text-gray-400 text-xs rounded">
-                  PC
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+     
       {/* CTA Section */}
       <section className="py-16 relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-[var(--color-accent)] opacity-90"></div>

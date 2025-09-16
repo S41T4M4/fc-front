@@ -162,3 +162,373 @@ h1, h2, h3, h4, h5, h6 {
 ::-webkit-scrollbar-thumb:hover {
   background: var(--color-accent);
 }
+
+/* Flowchart animations */
+@keyframes flowStep {
+  0% {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes flowConnector {
+  0% {
+    opacity: 0;
+    transform: scaleY(0);
+  }
+  100% {
+    opacity: 1;
+    transform: scaleY(1);
+  }
+}
+
+@keyframes stepGlow {
+  0%, 100% {
+    box-shadow: 0 0 5px rgba(0, 255, 170, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 15px rgba(0, 255, 170, 0.6);
+  }
+}
+
+.flow-step {
+  animation: flowStep 0.6s ease-out forwards;
+}
+
+.flow-connector {
+  animation: flowConnector 0.4s ease-out forwards;
+  animation-delay: 0.3s;
+}
+
+.flow-step:hover {
+  animation: stepGlow 2s ease-in-out infinite;
+}
+
+.flow-step:nth-child(1) { animation-delay: 0.1s; }
+.flow-step:nth-child(3) { animation-delay: 0.3s; }
+.flow-step:nth-child(5) { animation-delay: 0.5s; }
+.flow-step:nth-child(7) { animation-delay: 0.7s; }
+
+.flow-connector:nth-child(2) { animation-delay: 0.2s; }
+.flow-connector:nth-child(4) { animation-delay: 0.4s; }
+.flow-connector:nth-child(6) { animation-delay: 0.6s; }
+
+/* Advanced Flow Animations */
+@keyframes stepReveal {
+  0% {
+    opacity: 0;
+    transform: translateY(30px) scale(0.9);
+    filter: blur(5px);
+  }
+  50% {
+    opacity: 0.5;
+    transform: translateY(15px) scale(0.95);
+    filter: blur(2px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+@keyframes stepHover {
+  0% {
+    transform: translateY(0) scale(1);
+    box-shadow: 0 4px 20px rgba(0, 255, 170, 0.1);
+  }
+  50% {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 8px 30px rgba(0, 255, 170, 0.2);
+  }
+  100% {
+    transform: translateY(-4px) scale(1.04);
+    box-shadow: 0 12px 40px rgba(0, 255, 170, 0.3);
+  }
+}
+
+@keyframes iconPulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(0, 255, 170, 0.7);
+  }
+  50% {
+    transform: scale(1.1);
+    box-shadow: 0 0 0 10px rgba(0, 255, 170, 0);
+  }
+}
+
+@keyframes progressFlow {
+  0% {
+    width: 0%;
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    width: 100%;
+    opacity: 1;
+  }
+}
+
+@keyframes particleFloat {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 0.3;
+  }
+  50% {
+    transform: translateY(-20px) rotate(180deg);
+    opacity: 1;
+  }
+}
+
+@keyframes successRipple {
+  0% {
+    transform: scale(0);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(4);
+    opacity: 0;
+  }
+}
+
+/* Advanced Flow Classes */
+.flow-step {
+  animation: stepReveal 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  opacity: 0;
+}
+
+.flow-step:hover {
+  animation: stepHover 0.3s ease-out forwards;
+}
+
+.flow-step:nth-child(1) { animation-delay: 0.1s; }
+.flow-step:nth-child(3) { animation-delay: 0.3s; }
+.flow-step:nth-child(5) { animation-delay: 0.5s; }
+.flow-step:nth-child(7) { animation-delay: 0.7s; }
+
+.flow-icon {
+  animation: iconPulse 2s ease-in-out infinite;
+}
+
+.flow-progress {
+  position: relative;
+  overflow: hidden;
+}
+
+.flow-progress::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(0, 255, 170, 0.8), transparent);
+  animation: progressFlow 3s ease-in-out infinite;
+  animation-delay: var(--delay, 0s);
+}
+
+.particle-float {
+  animation: particleFloat 4s ease-in-out infinite;
+}
+
+.success-ripple {
+  position: relative;
+  overflow: hidden;
+}
+
+.success-ripple::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(34, 197, 94, 0.3);
+  transform: translate(-50%, -50%);
+  animation: successRipple 1.5s ease-out infinite;
+}
+
+/* Glass morphism effect */
+.glass-morphism {
+  background: rgba(26, 34, 52, 0.4);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+/* Gradient border animation */
+.gradient-border {
+  position: relative;
+  background: linear-gradient(145deg, #1a2234, #151c2d);
+  border-radius: 12px;
+  padding: 2px;
+}
+
+.gradient-border::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  padding: 2px;
+  background: linear-gradient(45deg, #00ffaa, #0066ff, #00ffaa);
+  border-radius: inherit;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  animation: gradientShift 3s linear infinite;
+}
+
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Dashboard Animations */
+@keyframes dashboardReveal {
+  0% {
+    opacity: 0;
+    transform: translateY(40px) scale(0.95);
+    filter: blur(10px);
+  }
+  50% {
+    opacity: 0.7;
+    transform: translateY(20px) scale(0.98);
+    filter: blur(5px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+@keyframes statCounter {
+  0% {
+    transform: scale(1);
+    color: inherit;
+  }
+  50% {
+    transform: scale(1.05);
+    color: var(--color-accent);
+  }
+  100% {
+    transform: scale(1);
+    color: inherit;
+  }
+}
+
+@keyframes progressFill {
+  0% {
+    width: 0%;
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    width: var(--target-width);
+    opacity: 1;
+  }
+}
+
+@keyframes transactionSlide {
+  0% {
+    opacity: 0;
+    transform: translateX(100px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes liveIndicator {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(0.8);
+  }
+}
+
+@keyframes chartGrow {
+  0% {
+    transform: scaleX(0);
+    transform-origin: left;
+  }
+  100% {
+    transform: scaleX(1);
+  }
+}
+
+/* Dashboard Classes */
+.dashboard-container {
+  animation: dashboardReveal 1s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  opacity: 0;
+}
+
+.stat-counter {
+  animation: statCounter 2s ease-in-out infinite;
+  animation-delay: var(--delay, 0s);
+}
+
+.progress-bar {
+  position: relative;
+  overflow: hidden;
+}
+
+.progress-bar::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  animation: progressFill 2s ease-out forwards;
+  animation-delay: var(--delay, 0s);
+}
+
+.transaction-item {
+  animation: transactionSlide 0.5s ease-out forwards;
+  opacity: 0;
+}
+
+.transaction-item:nth-child(1) { animation-delay: 0.1s; }
+.transaction-item:nth-child(2) { animation-delay: 0.2s; }
+.transaction-item:nth-child(3) { animation-delay: 0.3s; }
+.transaction-item:nth-child(4) { animation-delay: 0.4s; }
+.transaction-item:nth-child(5) { animation-delay: 0.5s; }
+
+.live-indicator {
+  animation: liveIndicator 2s ease-in-out infinite;
+}
+
+.chart-bar {
+  animation: chartGrow 1.5s ease-out forwards;
+  transform: scaleX(0);
+  transform-origin: left;
+}
+
+.chart-bar:nth-child(1) { animation-delay: 0.5s; }
+.chart-bar:nth-child(2) { animation-delay: 1s; }
+.chart-bar:nth-child(3) { animation-delay: 1.5s; }
+
+/* Hover Effects for Dashboard */
+.dashboard-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(0, 255, 170, 0.15);
+}
+
+.dashboard-card:hover .stat-counter {
+  animation-play-state: paused;
+  transform: scale(1.05);
+  color: var(--color-accent);
+}

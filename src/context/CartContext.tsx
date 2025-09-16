@@ -69,6 +69,12 @@ export const CartProvider: React.FC<{
   }, [isAuthenticated]);
 
   const loadCart = async (userId: number) => {
+    // Evitar chamadas duplicadas
+    if (isLoading) {
+      console.log('CartContext: Already loading cart, skipping...');
+      return;
+    }
+    
     console.log('CartContext: Loading cart for user:', userId);
     setIsLoading(true);
     setError(null);
